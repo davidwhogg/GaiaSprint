@@ -218,6 +218,11 @@ hr {
   
   header {
     padding:0;
+    padding-bottom:25px;
+  }
+  
+  section {
+    padding-bottom:25px;
   }
   
   header ul, header p.view {
@@ -226,8 +231,7 @@ hr {
   
   pre, code {
     word-wrap:normal;
-  }
-}
+  }}
 
 @media print, screen and (max-width: 480px) {
   body {
