@@ -98,6 +98,7 @@ img {
 header {
   width:270px;
   float:left;
+  padding-bottom:50px;
 }
 
 header ul {
