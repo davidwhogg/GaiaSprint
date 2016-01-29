@@ -182,7 +182,7 @@ hr {
     margin:0;
   }
   
-  header, section, footer {
+  header, section {
     float:none;
     position:static;
     width:auto;
@@ -193,8 +193,8 @@ hr {
   }
   
   section {
-    border:1px solid #e5e5e5;
-    border-width:1px 0;
+    border-top:1px solid #e5e5e5;
+    border-top-width:1px 0;
     padding:20px 0;
     margin:0 0 20px;
   }
