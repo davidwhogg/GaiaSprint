@@ -5,6 +5,7 @@ import os
 import ads
 from googleapiclient.discovery import build
 from subprocess import check_output
+from glob import glob
 
 service = build("customsearch", "v1", developerKey=os.getenv("GOOGLE_API_KEY"))
 
@@ -14,6 +15,15 @@ IGNORE_ARXIV_CODES = [
     "1609.05401",
     "1612.02010"    
 ]
+
+# check and add these 
+CHECK_ARXIV_CODES = [
+    "1810.09819",
+    "1810.09466",
+    "1810.09468",
+]
+
+
 
 formatted_urls = []
 
@@ -40,6 +50,16 @@ while True:
         break
 
 print("Found {} urls".format(len(formatted_urls)))
+
+if len(CHECK_ARXIV_CODES) > 0:
+    for each in CHECK_ARXIV_CODES:
+        url = f"https://arxiv.org/pdf/{each}"
+
+        if url not in formatted_urls:
+            formatted_urls.append(url)
+
+
+files = glob("*.html")
 missing = []
 for formatted_url in formatted_urls:
 
@@ -50,8 +70,10 @@ for formatted_url in formatted_urls:
 
     print("Checking {}".format(formatted_url))
 
+    command = ["grep", arxiv_code]
+    command.extend(files)
     try:
-        output = check_output(["grep", arxiv_code, "-r", "."])
+        output = check_output(command)
 
     except:
         missing.append(formatted_url)
