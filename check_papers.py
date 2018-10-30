@@ -18,9 +18,6 @@ IGNORE_ARXIV_CODES = [
 
 # check and add these 
 CHECK_ARXIV_CODES = [
-    "1810.09819",
-    "1810.09466",
-    "1810.09468",
 ]
 
 
