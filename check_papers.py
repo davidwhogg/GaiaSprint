@@ -13,7 +13,8 @@ IGNORE_ARXIV_CODES = [
     # Known false positives.
     "1311.0759",
     "1609.05401",
-    "1612.02010"    
+    "1612.02010",
+    "1811.03919"
 ]
 
 # check and add these 
