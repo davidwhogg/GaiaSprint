@@ -197,9 +197,6 @@ for ack, page in match_acks:
             with open(page, "w") as fp:
                 fp.write(updated_content)
 
-
-
-
-    #os.system(f"git add {page}")
-    #os.system(f"git commit -m \"auto-commit paper {arxiv_code}\"")
+        os.system(f"git add {page}")
+        os.system(f"git commit -m \"auto-commit paper {arxiv_code}\"")
 
