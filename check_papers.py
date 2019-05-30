@@ -17,6 +17,12 @@ IGNORE_ARXIV_CODES = [
     "1811.03919"
 ]
 
+# Already added these.
+IGNORE_ADS_ARTICLE_IDS = [
+    15118334,
+    15714195,
+    15612118
+]
 # check and add these 
 CHECK_ARXIV_CODES = [
 ]
@@ -79,13 +85,12 @@ for formatted_url in formatted_urls:
 for each in missing:
     print("Could not find reference to {}".format(each))
 
-print("Fin.")
-
 
 match_acks = [
+    ("2019 Santa Barbara Gaia Sprint", "2019SB.html"),
     ("2018 NYC Gaia Sprint", "2018NYC.html"),
     ("2017 Heidelberg Gaia Sprint", "2017HD.html"),
-    ("2016 NYC Gaia Sprint", "2016NYC.html")
+    ("2016 NYC Gaia Sprint", "2016NYC.html"),
 ]
 
 
@@ -141,6 +146,57 @@ for each in missing:
     with open(page, "w") as fp:
         fp.write(updated_content)
 
-    os.system(f"git add {page}")
-    os.system(f"git commit -m \"auto-commit paper {arxiv_code}\"")
+
+# Search for articles using ADS full text search and acknowledgement search.
+for ack, page in match_acks:
+    results = list(ads.SearchQuery(q=f"ack:\"{ack}\"", fl=["identifier", "title", "author"]))
+
+    for article in results:
+
+        if int(article.id) in IGNORE_ADS_ARTICLE_IDS:
+            continue
+
+        for identifier in article.identifier:
+            if "arxiv:" in identifier.lower():
+                arxiv_code = identifier.split(":")[1]
+                break
+        else:
+            print(f"Warning: cannot find arXiv identifier to http://adsabs.harvard.edu/abs/{article.identifier[0]} (article id {article.id})")
+            continue
+
+        if arxiv_code in IGNORE_ARXIV_CODES:
+            continue
+
+        command = ["grep", arxiv_code]
+        command.append(page)
+        try:
+            output = check_output(command)
+
+        except:
+            # It's new.
+            title = article.title[0]
+            num_authors = len(article.author)
+            if num_authors == 1:
+                authors = article.author[0]
+            elif num_authors < 10:
+                authors = ", ".join(article.author[:-1]) + " and " + article.author[-1]
+            else:
+                authors = "{0} et al.".format(article.author[0])
+
+            new_content = f"    <li><a href=\"https://arxiv.org/abs/{arxiv_code}\">{title}</a>, {authors}</li>\n"
+
+            with open(page, "r") as fp:
+                # Find first <ul>
+                content = fp.read()
+
+            search_string = "<ul>\n"
+            pos = content.index(search_string) + len(search_string)
+
+            updated_content = content[:pos] + new_content + content[pos:]
+
+            with open(page, "w") as fp:
+                fp.write(updated_content)
+
+        os.system(f"git add {page}")
+        os.system(f"git commit -m \"auto-commit paper {arxiv_code}\"")
 
