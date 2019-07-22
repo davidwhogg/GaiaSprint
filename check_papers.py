@@ -200,4 +200,5 @@ for ack, page in match_acks:
             os.system(f"git add {page}")
             os.system(f"git commit -m \"auto-commit paper {arxiv_code}\"")
 
-
+# Don't push in case we really fucked up
+#os.system("git push")
